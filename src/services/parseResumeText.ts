@@ -53,7 +53,7 @@ function prepareText(raw: string): string {
     .replace(/[ \t]+/g, ' ')
     .replace(/(\s)((?:https?:\/\/)?(?:www\.)?(?:linkedin|github)\.com)/gi, '\n$2')
     .replace(SECTION_SPLITTER, '\n\n$1\n')
-    .replace(/\s+-\s+/g, '\n- ')
+    .replace(/(?<!\d{2}\/\d{4})(?<!\d{4})\s+-\s+(?!atual\b|presente\b|current\b|\d)/gi, '\n- ')
     .replace(/\s+•\s+/g, '\n- ')
 }
 
@@ -182,8 +182,9 @@ function parseDateRange(text: string): { startDate: string; endDate: string | nu
 }
 
 function isJobMetaLine(line: string): boolean {
-  if (!line.includes('|')) return false
-  return DATE_RE.test(line) || /\b(atual|presente|current)\b/i.test(line)
+  const pipes = (line.match(/\|/g) ?? []).length
+  if (pipes < 2) return false
+  return DATE_RE.test(line) || /\b(atual|presente|current|\d{2}\/\d{4}|\d{4})\b/i.test(line)
 }
 
 function explodeExperienceLines(block: string): string[] {

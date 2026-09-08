@@ -1,6 +1,7 @@
 import { getJobById, getResume, getVersionByMatchId, saveVersion } from '@/lib/storage'
 import { calculateMatch } from '@/services/calculateMatch'
 import { optimizeForATS } from '@/services/optimizeForATS'
+import { hydrateResume } from '@/services/parseResumeText'
 import { createId } from '@/lib/text'
 import type { AtsLevel, Job, Match, Resume, ResumeFont, ResumeStyle, ResumeVersion } from '@/types/models'
 
@@ -21,7 +22,7 @@ export function generateResumeVersion(
   const font = options?.font ?? 'calibri'
   const atsLevel = options?.atsLevel ?? 'equilibrado'
   const { resume: optimizedResume, atsScore } = optimizeForATS(
-    resume,
+    hydrateResume(resume),
     job,
     atsLevel,
     match,
